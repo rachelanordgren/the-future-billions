@@ -1,41 +1,146 @@
 <!doctype html>
-<html lang="en"><head>
-<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>The Future Billions | Rachel & Nick · June 11, 2027</title>
-<meta name="description" content="You have mail from the future Billions. 💌 Save the date for Friday, June 11, 2027."/>
-<meta property="og:type" content="website"/>
-<meta property="og:site_name" content="The Future Billions"/>
-<meta property="og:title" content="You have mail from the future Billions. 💌"/>
-<meta property="og:description" content="Rachel & Nick · Friday, June 11, 2027"/>
-<meta property="og:image" content="https://rachelanordgren.github.io/the-future-billions/preview.jpg"/>
-<meta property="og:image:width" content="1080"/><meta property="og:image:height" content="1920"/>
-<meta property="og:image:type" content="image/jpeg"/>
-<meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:title" content="You have mail from the future Billions. 💌 "/>
-<meta name="twitter:image" content="https://rachelanordgren.github.io/the-future-billions/preview.jpg"/>
-<style>
-  html, body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-  }
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
 
-  iframe {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100dvh;
-    border: none;
-  }
-</style>
+    <title>The Future Billions | Save the Date</title>
+    <meta
+      name="description"
+      content="You have mail from the future Billions. 💌"
+    />
 
-<iframe
-  src="https://www.canva.com/design/DAHZEYcTcyI/ERth9s3iG3Nxnz7n4B3Kew/watch?embed&autoplay=1&mute=1"
-  allow="autoplay; fullscreen"
-  allowfullscreen
-></iframe>
-<footer>If the design doesn't load, <a href="https://www.canva.com/design/DAHZEYcTcyI/ERth9s3iG3Nxnz7n4B3Kew/watch" target="_blank" rel="noopener noreferrer">open it in Canva</a>.</footer>
-</main></body></html>
+    <!-- iMessage preview: original image WITHOUT Tap to Open -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="You have mail 💌" />
+    <meta property="og:description" content="From the future Billions." />
+    <meta
+      property="og:image"
+      content="https://rachelanordgren.github.io/future-billions/preview.jpg"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:image"
+      content="https://rachelanordgren.github.io/future-billions/preview.jpg"
+    />
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #55583b;
+      }
+
+      /* Opening envelope screen */
+      #opening-screen {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        height: 100dvh;
+        z-index: 10;
+
+        border: 0;
+        padding: 0;
+        background: #55583b;
+        cursor: pointer;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      #opening-screen img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        display: block;
+      }
+
+      /* Video */
+      #wedding-video {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        height: 100dvh;
+        object-fit: contain;
+        background: #000;
+      }
+
+      /* Hide opening screen after tap */
+      #opening-screen.hidden {
+        display: none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Full-screen, tappable envelope -->
+    <button
+      id="opening-screen"
+      type="button"
+      aria-label="Tap to open your save the date"
+    >
+      <img
+        src="tap-to-open.jpg"
+        alt="You have mail from the future Billions. 💌 Tap to Open."
+      />
+    </button>
+
+    <!-- Video starts with sound after tap -->
+    <video
+      id="wedding-video"
+      playsinline
+      webkit-playsinline
+      preload="auto"
+      poster="preview.jpg"
+      controls
+    >
+      <source src="save-the-date.mp4" type="video/mp4" />
+      Your browser does not support video playback.
+    </video>
+
+    <script>
+      const openingScreen = document.getElementById("opening-screen");
+      const video = document.getElementById("wedding-video");
+
+      openingScreen.addEventListener("click", () => {
+        // Start from beginning, with sound.
+        video.currentTime = 0;
+        video.muted = false;
+        video.volume = 1;
+
+        // Play directly from the user's tap.
+        const playPromise = video.play();
+
+        if (playPromise !== undefined) {
+          playPromise
+            .then(() => {
+              openingScreen.classList.add("hidden");
+            })
+            .catch((error) => {
+              console.error("Video playback failed:", error);
+              // Reveal native video controls for manual playback.
+              openingScreen.classList.add("hidden");
+            });
+        } else {
+          openingScreen.classList.add("hidden");
+        }
+      });
+    </script>
+  </body>
+</html>
