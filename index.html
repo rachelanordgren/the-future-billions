@@ -8,12 +8,15 @@
     />
 
     <title>The Future Billions | Save the Date</title>
+
     <meta
       name="description"
       content="You have mail from the future Billions. 💌"
     />
 
-    <!-- iMessage preview: original image WITHOUT Tap to Open -->
+    <meta name="robots" content="noindex, nofollow" />
+
+    <!-- iMessage preview: original envelope WITHOUT Tap to Open -->
     <meta property="og:type" content="website" />
     <meta
       property="og:title"
@@ -24,6 +27,11 @@
       property="og:image"
       content="https://rachelanordgren.github.io/future-billions/preview.jpg"
     />
+    <meta
+      property="og:url"
+      content="https://rachelanordgren.github.io/future-billions/"
+    />
+
     <meta name="twitter:card" content="summary_large_image" />
     <meta
       name="twitter:image"
@@ -45,17 +53,18 @@
         background: #55583b;
       }
 
-      /* Opening envelope screen */
+      /* Full-screen opening image */
       #opening-screen {
         position: fixed;
         inset: 0;
+        z-index: 10;
+
         width: 100%;
         height: 100%;
         height: 100dvh;
-        z-index: 10;
 
-        border: 0;
         padding: 0;
+        border: none;
         background: #55583b;
         cursor: pointer;
 
@@ -73,26 +82,95 @@
         display: block;
       }
 
-      /* Video */
+      #opening-screen.hidden {
+        display: none;
+      }
+
+      /* Full-screen video */
       #wedding-video {
         position: fixed;
         inset: 0;
+
         width: 100%;
         height: 100%;
         height: 100dvh;
+
         object-fit: contain;
         background: #000;
+        cursor: pointer;
       }
 
-      /* Hide opening screen after tap */
-      #opening-screen.hidden {
+      /* Hide native Safari controls */
+      #wedding-video::-webkit-media-controls {
+        display: none !important;
+      }
+
+      /* Replay button */
+      #replay-button {
+        position: fixed;
+        bottom: calc(12% + env(safe-area-inset-bottom));
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 20;
+
+        padding: 14px 28px;
+
+        border: 1px solid rgba(255, 255, 255, 0.65);
+        border-radius: 40px;
+
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(12px);
+
+        color: white;
+        font-family: Georgia, serif;
+        font-size: 17px;
+        letter-spacing: 0.5px;
+
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      #replay-button.hidden {
+        display: none;
+      }
+
+      /* Small pause indicator */
+      #pause-indicator {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 5;
+
+        color: white;
+        font-size: 48px;
+        text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+
+        pointer-events: none;
+      }
+
+      #pause-indicator.hidden {
         display: none;
       }
     </style>
   </head>
 
   <body>
-    <!-- Full-screen, tappable envelope -->
+    <!-- Video: no native controls -->
+    <video
+      id="wedding-video"
+      playsinline
+      webkit-playsinline
+      preload="auto"
+      poster="preview.jpg"
+      disablepictureinpicture
+      controlslist="nodownload noplaybackrate noremoteplayback"
+    >
+      <source src="save-the-date.mp4" type="video/mp4" />
+      Your browser does not support video playback.
+    </video>
+
+    <!-- Opening envelope -->
     <button
       id="opening-screen"
       type="button"
@@ -100,34 +178,37 @@
     >
       <img
         src="tap-to-open.jpg"
-        alt="You have mail from the future Billions. 💌 Tap to Open."
+        alt="You have got mail from the future Billions. Tap to Open. 💌"
       />
     </button>
 
-    <!-- Video starts with sound after tap -->
-    <video
-      id="wedding-video"
-      playsinline
-      webkit-playsinline
-      preload="auto"
-      poster="preview.jpg"
-      controls
-    >
-      <source src="save-the-date.mp4" type="video/mp4" />
-      Your browser does not support video playback.
-    </video>
+    <!-- Pause indicator -->
+    <div id="pause-indicator" class="hidden" aria-hidden="true">▶</div>
+
+    <!-- Replay button -->
+    <button id="replay-button" class="hidden" type="button">↻ Replay</button>
 
     <script>
       const openingScreen = document.getElementById("opening-screen");
+
       const video = document.getElementById("wedding-video");
 
+      const replayButton = document.getElementById("replay-button");
+
+      const pauseIndicator = document.getElementById("pause-indicator");
+
+      let hasOpened = false;
+
+      // Open envelope and play video with sound
       openingScreen.addEventListener("click", () => {
-        // Start from beginning, with sound.
+        if (hasOpened) return;
+
+        hasOpened = true;
+
         video.currentTime = 0;
         video.muted = false;
         video.volume = 1;
 
-        // Play directly from the user's tap.
         const playPromise = video.play();
 
         if (playPromise !== undefined) {
@@ -136,13 +217,56 @@
               openingScreen.classList.add("hidden");
             })
             .catch((error) => {
-              console.error("Video playback failed:", error);
-              // Reveal native video controls for manual playback.
+              console.error("Playback failed:", error);
               openingScreen.classList.add("hidden");
+              pauseIndicator.classList.remove("hidden");
             });
         } else {
           openingScreen.classList.add("hidden");
         }
+      });
+
+      // Tap video to pause or resume
+      video.addEventListener("click", () => {
+        if (video.ended) return;
+
+        if (video.paused) {
+          video.play().catch(console.error);
+        } else {
+          video.pause();
+        }
+      });
+
+      // Show play icon when paused
+      video.addEventListener("pause", () => {
+        if (!video.ended && hasOpened) {
+          pauseIndicator.classList.remove("hidden");
+        }
+      });
+
+      // Hide play icon while playing
+      video.addEventListener("play", () => {
+        pauseIndicator.classList.add("hidden");
+        replayButton.classList.add("hidden");
+      });
+
+      // Show Replay when video ends
+      video.addEventListener("ended", () => {
+        pauseIndicator.classList.add("hidden");
+        replayButton.classList.remove("hidden");
+      });
+
+      // Replay from beginning with sound
+      replayButton.addEventListener("click", () => {
+        video.currentTime = 0;
+        video.muted = false;
+
+        replayButton.classList.add("hidden");
+
+        video.play().catch((error) => {
+          console.error("Replay failed:", error);
+          replayButton.classList.remove("hidden");
+        });
       });
     </script>
   </body>
