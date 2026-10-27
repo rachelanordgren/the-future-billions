@@ -249,7 +249,7 @@
     id="wedding-video"
     playsinline
     webkit-playsinline
-    preload="auto"
+    preload="metadata"
     poster="preview.jpg"
     disablepictureinpicture
     controlslist="nodownload noplaybackrate noremoteplayback"
@@ -365,19 +365,26 @@
 
     let hasOpened = false;
 
-    // Open envelope and play with sound.
+    // Open envelope and play video with sound.
     openingScreen.addEventListener("click", () => {
       if (hasOpened) return;
+
+      hasOpened = true;
 
       video.currentTime = 0;
       video.muted = false;
       video.volume = 1;
 
-      video.play().then(() => {
-        hasOpened = true;
-        openingScreen.classList.add("hidden");
-      }).catch(error => {
+      // Hide envelope immediately.
+      openingScreen.classList.add("hidden");
+
+      // Start video directly from the user's tap.
+      video.play().catch(error => {
         console.error("Playback failed:", error);
+
+        // Restore envelope so guests can try again.
+        hasOpened = false;
+        openingScreen.classList.remove("hidden");
       });
     });
 
