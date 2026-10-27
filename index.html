@@ -1,304 +1,523 @@
-<!doctype html>
+
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, viewport-fit=cover"
-    />
+<head>
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  >
 
-    <title>The Future Billions | Save the Date</title>
+  <title>The Future Billions | Save the Date</title>
+  <meta name="description"
+    content="You have mail from the future Billions. 💌">
 
-    <meta
-      name="description"
-      content="You have mail from the future Billions. 💌"
-    />
+  <meta name="robots" content="noindex, nofollow">
 
-    <meta name="robots" content="noindex, nofollow" />
+  <!-- iMessage preview: original envelope WITHOUT Tap to Open -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="You have mail from the future Billions. 💌">
+  <meta property="og:image"
+    content="https://rachelanordgren.github.io/future-billions/preview.jpg">
+  <meta property="og:url"
+    content="https://rachelanordgren.github.io/future-billions/">
 
-    <!-- iMessage preview: original envelope image -->
-    <meta property="og:type" content="website" />
-    <meta
-      property="og:title"
-      content="You have mail from the future Billions. 💌"
-    />
-    <meta
-      property="og:image"
-      content="https://rachelanordgren.github.io/future-billions/preview.jpg"
-    />
-    <meta
-      property="og:url"
-      content="https://rachelanordgren.github.io/future-billions/"
-    />
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image"
+    content="https://rachelanordgren.github.io/future-billions/preview.jpg">
 
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta
-      name="twitter:image"
-      content="https://rachelanordgren.github.io/future-billions/preview.jpg"
-    />
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-    <style>
-      * {
-        box-sizing: border-box;
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #55583b;
+      font-family: Georgia, serif;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Opening envelope */
+    #opening-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      width: 100%;
+      height: 100dvh;
+      padding: 0;
+      border: 0;
+      background: #55583b;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    #opening-screen img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    /* Full-screen video */
+    #wedding-video {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100dvh;
+      object-fit: contain;
+      background: #000;
+      cursor: pointer;
+    }
+
+    #wedding-video::-webkit-media-controls {
+      display: none !important;
+    }
+
+    /* Pause indicator */
+    #pause-indicator {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 5;
+      color: white;
+      font-size: 48px;
+      text-shadow: 0 2px 12px rgba(0,0,0,.4);
+      pointer-events: none;
+    }
+
+    /* End-of-video buttons */
+    #end-buttons {
+      position: fixed;
+      bottom: calc(12% + env(safe-area-inset-bottom));
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      width: max-content;
+    }
+
+    #replay-button,
+    #calendar-button {
+      min-width: 210px;
+      min-height: 48px;
+      padding: 14px 24px;
+      border: 1px solid rgba(255,255,255,.65);
+      border-radius: 40px;
+      background: rgba(0,0,0,.5);
+      color: white;
+      font-family: Georgia, serif;
+      font-size: 16px;
+      cursor: pointer;
+      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(12px);
+    }
+
+    #calendar-button {
+      background: #55583b;
+    }
+
+    /* Calendar modal overlay */
+    #calendar-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 30;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 22px;
+      background: rgba(0,0,0,.65);
+      -webkit-backdrop-filter: blur(6px);
+      backdrop-filter: blur(6px);
+    }
+
+    /* Modal card */
+    .modal-card {
+      position: relative;
+      width: 100%;
+      max-width: 380px;
+      padding: 30px 24px;
+      border-radius: 18px;
+      background: #f5f1e9;
+      color: #423f27;
+      box-shadow: 0 12px 45px rgba(0,0,0,.2);
+      text-align: center;
+      animation: modalIn .25s ease-out;
+    }
+
+    @keyframes modalIn {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
       }
-
-      html,
-      body {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-        background: #55583b;
+      to {
+        opacity: 1;
+        transform: translateY(0);
       }
+    }
 
-      /* Opening envelope screen */
-      #opening-screen {
-        position: fixed;
-        inset: 0;
-        z-index: 10;
+    .modal-card h2 {
+      margin: 0 0 20px;
+      font-size: 27px;
+      font-weight: normal;
+    }
 
-        width: 100%;
-        height: 100dvh;
+    .modal-card h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+      font-weight: normal;
+    }
 
-        padding: 0;
-        border: none;
-        background: #55583b;
-        cursor: pointer;
+    .event-details {
+      color: #77715f;
+      font-family: Arial, sans-serif;
+      font-size: 13px;
+      line-height: 1.7;
+      margin-bottom: 20px;
+    }
 
-        display: flex;
-        align-items: center;
-        justify-content: center;
+    .modal-divider {
+      height: 1px;
+      background: #d2cbbd;
+      margin-bottom: 20px;
+    }
 
-        -webkit-tap-highlight-color: transparent;
-      }
+    .calendar-option {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 16px;
+      margin-bottom: 10px;
+      border: 1px solid #d2cbbd;
+      border-radius: 10px;
+      background: transparent;
+      color: #423f27;
+      font-family: Arial, sans-serif;
+      font-size: 15px;
+      text-align: left;
+      text-decoration: none;
+      cursor: pointer;
+    }
 
-      #opening-screen img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-        display: block;
-      }
+    .calendar-option:active {
+      background: #e6e0d4;
+    }
 
-      .hidden {
-        display: none !important;
-      }
+    .calendar-option span:last-child {
+      color: #77715f;
+      font-size: 20px;
+    }
 
-      /* Full-screen video */
-      #wedding-video {
-        position: fixed;
-        inset: 0;
+    #close-modal {
+      position: absolute;
+      top: 14px;
+      right: 18px;
+      padding: 4px;
+      border: none;
+      background: none;
+      color: #423f27;
+      font-size: 26px;
+      cursor: pointer;
+    }
 
-        width: 100%;
-        height: 100dvh;
+    .modal-footer {
+      margin-top: 18px;
+      font-size: 12px;
+      color: #77715f;
+    }
+  </style>
+</head>
 
-        object-fit: contain;
-        background: #000;
-        cursor: pointer;
-      }
+<body>
 
-      /* Hide native Safari controls */
-      #wedding-video::-webkit-media-controls {
-        display: none !important;
-      }
+  <!-- Video -->
+  <video
+    id="wedding-video"
+    playsinline
+    webkit-playsinline
+    preload="auto"
+    poster="preview.jpg"
+    disablepictureinpicture
+    controlslist="nodownload noplaybackrate noremoteplayback"
+  >
+    <source src="save-the-date.mp4" type="video/mp4">
+    Your browser does not support video playback.
+  </video>
 
-      /* Pause indicator */
-      #pause-indicator {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 5;
+  <!-- Tap-to-open envelope -->
+  <button
+    id="opening-screen"
+    type="button"
+    aria-label="Tap to open your save the date"
+  >
+    <img src="tap-to-open.jpg"
+      alt="You have mail from the future Billions. Tap to Open. 💌">
+  </button>
 
-        color: white;
-        font-size: 48px;
-        text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+  <!-- Pause indicator -->
+  <div id="pause-indicator" class="hidden" aria-hidden="true">
+    ▶
+  </div>
 
-        pointer-events: none;
-      }
-
-      /* End-of-video buttons */
-      #end-buttons {
-        position: fixed;
-        bottom: calc(12% + env(safe-area-inset-bottom));
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 20;
-
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 12px;
-
-        width: max-content;
-      }
-
-      #replay-button,
-      #calendar-button {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        min-width: 210px;
-        min-height: 48px;
-        padding: 14px 24px;
-
-        border: 1px solid rgba(255, 255, 255, 0.65);
-        border-radius: 40px;
-
-        background: rgba(0, 0, 0, 0.5);
-        -webkit-backdrop-filter: blur(12px);
-        backdrop-filter: blur(12px);
-
-        color: white;
-        font-family: Georgia, serif;
-        font-size: 16px;
-        letter-spacing: 0.3px;
-        text-align: center;
-        text-decoration: none;
-
-        cursor: pointer;
-        -webkit-tap-highlight-color: transparent;
-      }
-
-      #calendar-button {
-        background: #55583b;
-      }
-
-      #replay-button:active,
-      #calendar-button:active {
-        opacity: 0.8;
-      }
-    </style>
-  </head>
-
-  <body>
-    <!-- Video, without native controls -->
-    <video
-      id="wedding-video"
-      playsinline
-      webkit-playsinline
-      preload="auto"
-      poster="preview.jpg"
-      disablepictureinpicture
-      controlslist="nodownload noplaybackrate noremoteplayback"
-    >
-      <source src="save-the-date.mp4" type="video/mp4" />
-      Your browser does not support video playback.
-    </video>
-
-    <!-- Opening screen -->
-    <button
-      id="opening-screen"
-      type="button"
-      aria-label="Tap to open your save the date"
-    >
-      <img
-        src="tap-to-open.jpg"
-        alt="You have mail from the future Billions. Tap to Open. 💌"
-      />
+  <!-- End-of-video buttons -->
+  <div id="end-buttons" class="hidden">
+    <button id="replay-button" type="button">
+      ↻ Replay
     </button>
 
-    <!-- Pause indicator -->
-    <div id="pause-indicator" class="hidden" aria-hidden="true">▶</div>
+    <button id="calendar-button" type="button">
+      + Add to Calendar
+    </button>
+  </div>
 
-    <!-- End-of-video buttons -->
-    <div id="end-buttons" class="hidden">
-      <button id="replay-button" type="button">↻ Replay</button>
+  <!-- Calendar modal -->
+  <div
+    id="calendar-modal"
+    class="hidden"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modal-title"
+  >
+    <div class="modal-card">
+
+      <button id="close-modal" type="button"
+        aria-label="Close calendar options">
+        ×
+      </button>
+
+      <h2 id="modal-title">Save our date</h2>
+
+      <h3>Rachel & Nick's Wedding</h3>
+
+      <div class="event-details">
+        Friday, June 11, 2027 · 5:00 PM<br>
+        Castle Unicorn · Pacific Junction, IA
+      </div>
+
+      <div class="modal-divider"></div>
 
       <a
-        id="calendar-button"
-        href="https://calendar.google.com/calendar/render?action=TEMPLATE&amp;text=Rachel%20%26%20Nick%27s%20Wedding&amp;dates=20270611T220000Z%2F20270612T040000Z&amp;details=Ceremony%20at%205%3A00%20PM.%20Reception%20to%20follow.%20Invitation%20to%20follow.&amp;location=Castle%20Unicorn%2C%20Pacific%20Junction%2C%20IA&amp;ctz=America%2FChicago"
+        id="google-calendar"
+        class="calendar-option"
         target="_blank"
         rel="noopener noreferrer"
       >
-        + Add to Calendar
+        <span>Google Calendar</span>
+        <span>›</span>
       </a>
+
+      <a
+        id="apple-calendar"
+        class="calendar-option"
+        download="Rachel-and-Nick-Wedding.ics"
+      >
+        <span>Apple Calendar</span>
+        <span>›</span>
+      </a>
+
+      <a
+        id="outlook-calendar"
+        class="calendar-option"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <span>Outlook Calendar</span>
+        <span>›</span>
+      </a>
+
+      <div class="modal-footer">
+        Invitation to follow ♡
+      </div>
     </div>
+  </div>
 
-    <script>
-      const openingScreen = document.getElementById("opening-screen");
+  <script>
+    const openingScreen =
+      document.getElementById("opening-screen");
+    const video =
+      document.getElementById("wedding-video");
+    const endButtons =
+      document.getElementById("end-buttons");
+    const replayButton =
+      document.getElementById("replay-button");
+    const calendarButton =
+      document.getElementById("calendar-button");
+    const pauseIndicator =
+      document.getElementById("pause-indicator");
+    const calendarModal =
+      document.getElementById("calendar-modal");
+    const closeModal =
+      document.getElementById("close-modal");
 
-      const video = document.getElementById("wedding-video");
+    let hasOpened = false;
 
-      const endButtons = document.getElementById("end-buttons");
+    // Open envelope and play with sound.
+    openingScreen.addEventListener("click", () => {
+      if (hasOpened) return;
 
-      const replayButton = document.getElementById("replay-button");
+      video.currentTime = 0;
+      video.muted = false;
+      video.volume = 1;
 
-      const pauseIndicator = document.getElementById("pause-indicator");
-
-      let hasOpened = false;
-
-      // Open the envelope and play with sound.
-      openingScreen.addEventListener("click", () => {
-        if (hasOpened) return;
-
-        video.currentTime = 0;
-        video.muted = false;
-        video.volume = 1;
-
-        // Playback is initiated by the guest's tap.
-        const playPromise = video.play();
-
-        playPromise
-          .then(() => {
-            hasOpened = true;
-            openingScreen.classList.add("hidden");
-          })
-          .catch((error) => {
-            console.error("Playback failed:", error);
-
-            // Allow another tap if playback was blocked.
-            hasOpened = false;
-          });
+      video.play().then(() => {
+        hasOpened = true;
+        openingScreen.classList.add("hidden");
+      }).catch(error => {
+        console.error("Playback failed:", error);
       });
+    });
 
-      // Tap the video to pause or resume.
-      video.addEventListener("click", () => {
-        if (!hasOpened || video.ended) return;
+    // Tap video to pause or resume.
+    video.addEventListener("click", () => {
+      if (!hasOpened || video.ended) return;
 
-        if (video.paused) {
-          video.play().catch(console.error);
-        } else {
-          video.pause();
-        }
-      });
+      if (video.paused) {
+        video.play().catch(console.error);
+      } else {
+        video.pause();
+      }
+    });
 
-      // Show play indicator when paused.
-      video.addEventListener("pause", () => {
-        if (!video.ended && hasOpened) {
-          pauseIndicator.classList.remove("hidden");
-        }
-      });
+    video.addEventListener("pause", () => {
+      if (!video.ended && hasOpened) {
+        pauseIndicator.classList.remove("hidden");
+      }
+    });
 
-      // Hide overlays when playing.
-      video.addEventListener("play", () => {
-        pauseIndicator.classList.add("hidden");
-        endButtons.classList.add("hidden");
-      });
+    video.addEventListener("play", () => {
+      pauseIndicator.classList.add("hidden");
+      endButtons.classList.add("hidden");
+    });
 
-      // Display both buttons when video ends.
-      video.addEventListener("ended", () => {
-        pauseIndicator.classList.add("hidden");
-        endButtons.classList.remove("hidden");
-      });
+    // Show buttons when video finishes.
+    video.addEventListener("ended", () => {
+      pauseIndicator.classList.add("hidden");
+      endButtons.classList.remove("hidden");
+    });
 
-      // Replay video with sound.
-      replayButton.addEventListener("click", () => {
-        video.currentTime = 0;
-        video.muted = false;
-        video.volume = 1;
+    // Replay.
+    replayButton.addEventListener("click", () => {
+      video.currentTime = 0;
+      video.muted = false;
 
-        video
-          .play()
-          .then(() => {
-            endButtons.classList.add("hidden");
-          })
-          .catch((error) => {
-            console.error("Replay failed:", error);
-            endButtons.classList.remove("hidden");
-          });
-      });
-    </script>
-  </body>
+      video.play().catch(console.error);
+    });
+
+    // Modal open and close.
+    calendarButton.addEventListener("click", () => {
+      calendarModal.classList.remove("hidden");
+      closeModal.focus();
+    });
+
+    function hideModal() {
+      calendarModal.classList.add("hidden");
+      calendarButton.focus();
+    }
+
+    closeModal.addEventListener("click", hideModal);
+
+    calendarModal.addEventListener("click", event => {
+      if (event.target === calendarModal) {
+        hideModal();
+      }
+    });
+
+    document.addEventListener("keydown", event => {
+      if (
+        event.key === "Escape" &&
+        !calendarModal.classList.contains("hidden")
+      ) {
+        hideModal();
+      }
+    });
+
+    // Wedding event: 5 PM - 11 PM Central Daylight Time.
+    const title = "Rachel & Nick's Wedding";
+    const location = "Castle Unicorn, Pacific Junction, IA";
+    const details =
+      "Ceremony at 5:00 PM. Reception to follow. " +
+      "Invitation to follow.";
+
+    const startUTC = "20270611T220000Z";
+    const endUTC = "20270612T040000Z";
+
+    // Google Calendar.
+    const googleParams = new URLSearchParams({
+      action: "TEMPLATE",
+      text: title,
+      dates: startUTC + "/" + endUTC,
+      details: details,
+      location: location,
+      ctz: "America/Chicago"
+    });
+
+    document.getElementById("google-calendar").href =
+      "https://calendar.google.com/calendar/render?" +
+      googleParams.toString();
+
+    // Outlook.com Calendar.
+    const outlookParams = new URLSearchParams({
+      path: "/calendar/action/compose",
+      rru: "addevent",
+      subject: title,
+      startdt: "2027-06-11T22:00:00Z",
+      enddt: "2027-06-12T04:00:00Z",
+      body: details,
+      location: location
+    });
+
+    document.getElementById("outlook-calendar").href =
+      "https://outlook.live.com/calendar/0/deeplink/compose?" +
+      outlookParams.toString();
+
+    // Apple Calendar: Generate an ICS file.
+    function createICS() {
+      const uid =
+        "rachel-nick-wedding-20270611@futurebillions";
+
+      const ics = [
+        "BEGIN:VCALENDAR",
+        "VERSION:2.0",
+        "PRODID:-//Future Billions//Wedding//EN",
+        "CALSCALE:GREGORIAN",
+        "METHOD:PUBLISH",
+        "BEGIN:VEVENT",
+        "UID:" + uid,
+        "DTSTAMP:20261026T120000Z",
+        "DTSTART:" + startUTC,
+        "DTEND:" + endUTC,
+        "SUMMARY:Rachel & Nick's Wedding",
+        "DESCRIPTION:Ceremony at 5:00 PM. Reception to follow. Invitation to follow.",
+        "LOCATION:Castle Unicorn\\, Pacific Junction\\, IA",
+        "END:VEVENT",
+        "END:VCALENDAR",
+        ""
+      ].join("\r\n");
+
+      return URL.createObjectURL(
+        new Blob([ics], {
+          type: "text/calendar;charset=utf-8"
+        })
+      );
+    }
+
+    document.getElementById("apple-calendar").href =
+      createICS();
+  </script>
+
+</body>
 </html>
