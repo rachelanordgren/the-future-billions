@@ -339,9 +339,9 @@
       </a>
 
       <a
-        id="apple-calendar"
-        class="calendar-option"
-        download="Rachel-and-Nick-Wedding.ics"
+      id="apple-calendar"
+      class="calendar-option"
+      href="webcal://rachelanordgren.github.io/the-future-billions/wedding.ics"
       >
         <span>Apple Calendar</span>
         <span>›</span>
@@ -508,40 +508,6 @@
     document.getElementById("outlook-calendar").href =
       "https://outlook.live.com/calendar/0/deeplink/compose?" +
       outlookParams.toString();
-
-    // Apple Calendar: Generate an ICS file.
-    function createICS() {
-      const uid =
-        "rachel-nick-wedding-20270611@futurebillions";
-
-      const ics = [
-        "BEGIN:VCALENDAR",
-        "VERSION:2.0",
-        "PRODID:-//Future Billions//Wedding//EN",
-        "CALSCALE:GREGORIAN",
-        "METHOD:PUBLISH",
-        "BEGIN:VEVENT",
-        "UID:" + uid,
-        "DTSTAMP:20261026T120000Z",
-        "DTSTART:" + startUTC,
-        "DTEND:" + endUTC,
-        "SUMMARY:Rachel & Nick's Wedding",
-        "DESCRIPTION:Ceremony at 5:00 PM. Reception to follow. Invitation to follow.",
-        "LOCATION:Castle Unicorn\\, Pacific Junction\\, IA",
-        "END:VEVENT",
-        "END:VCALENDAR",
-        ""
-      ].join("\r\n");
-
-      return URL.createObjectURL(
-        new Blob([ics], {
-          type: "text/calendar;charset=utf-8"
-        })
-      );
-    }
-
-    document.getElementById("apple-calendar").href =
-      createICS();
   </script>
 
 </body>

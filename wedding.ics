@@ -1,0 +1,31 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//The Future Billions//Wedding Calendar//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Rachel & Nick's Wedding Weekend
+X-WR-CALDESC:Wedding festivities for Rachel and Nick
+X-WR-TIMEZONE:America/Chicago
+REFRESH-INTERVAL;VALUE=DURATION:P1D
+X-PUBLISHED-TTL:P1D
+BEGIN:VEVENT
+UID:billion-welcome-party-20270610@thefuturebillions
+DTSTAMP:20261026T120000Z
+DTSTART:20270610T230000Z
+DTEND:20270611T050000Z
+SUMMARY:Rachel & Nick's Welcome Party
+DESCRIPTION:Join us for drinks to kick off the wedding weekend!
+LOCATION:Blatt Beer & Table Rooftop\, Omaha\, NE
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:billion-wedding-20270611@thefuturebillions
+DTSTAMP:20261026T120000Z
+DTSTART:20270611T220000Z
+DTEND:20270612T040000Z
+SUMMARY:Rachel & Nick's Wedding
+DESCRIPTION:We're getting married! Ceremony and reception at Castle Unicorn.
+LOCATION:Castle Unicorn\, Pacific Junction\, IA
+STATUS:CONFIRMED
+END:VEVENT
+END:VCALENDAR
