@@ -454,7 +454,7 @@
 
     // Wedding event: 5 PM - 11 PM Central Daylight Time.
     const title = "Rachel & Nick's Wedding";
-    const location = "Castle Unicorn, Pacific Junction, IA";
+    const eventLocation = "Castle Unicorn, Pacific Junction, IA";
     const details =
       "Ceremony at 5:00 PM. Reception to follow. " +
       "Invitation to follow.";
@@ -468,7 +468,7 @@
       text: title,
       dates: startUTC + "/" + endUTC,
       details: details,
-      location: location,
+      location: eventLocation,
       ctz: "America/Chicago"
     });
 
@@ -484,7 +484,7 @@
       startdt: "2027-06-11T22:00:00Z",
       enddt: "2027-06-12T04:00:00Z",
       body: details,
-      location: location
+      location: eventLocation
     });
 
     document.getElementById("outlook-calendar").href =
